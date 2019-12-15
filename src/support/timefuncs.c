@@ -36,10 +36,21 @@ JL_DLLEXPORT int jl_gettimeofday(struct jl_timeval *jtv)
     jtv->sec = tb.time;
     jtv->usec = tb.millitm * 1000;
 #else
-    struct timeval tv;
-    int code = gettimeofday(&tv, NULL);
-    jtv->sec = tv.tv_sec;
-    jtv->usec = tv.tv_usec;
+    int code = 0; // success
+    // Allow reproducible build by using the environment variable SOURCE_DATE_EPOCH
+    // https://reproducible-builds.org/docs/source-date-epoch/
+    time_t now;
+    char *source_date_epoch;
+    if ((source_date_epoch = getenv("SOURCE_DATE_EPOCH")) == NULL ||
+        (now = (time_t)strtoll(source_date_epoch, NULL, 10)) <= 0) {
+      struct timeval tv;
+      code = gettimeofday(&tv, NULL);
+      jtv->sec = tv.tv_sec;
+      jtv->usec = tv.tv_usec;
+    } else {
+      jtv->sec = now;
+      jtv->usec = 0;
+    }
 #endif
     return code;
 }
