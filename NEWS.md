@@ -45,7 +45,7 @@ New library functions
 * `accumulate` has been added to the Iterators submodule.
 * `filter` can now act on a `Tuple` ([#32968]).
 * There is a now an `evalpoly` (generated) function meant to take the role of the `@evalpoly` macro. The function is just as efficient as the macro while giving added flexibility, so it should be preferred over `@evalpoly`. `evalpoly` takes a list of coefficients as a tuple, so where one might write `@evalpoly(x, p1, p2, p3)` one would instead write `evalpoly(x, (p1, p2, p3))`.
-
+* The new `midpoint(a, b)` computes the equivalent of `(a + b)/2` in an overflow-safe manner.
 
 Standard library changes
 ------------------------

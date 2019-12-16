@@ -2668,3 +2668,11 @@ let n = 12000000, k = 257000000
         v[end] == (n, 0.5)
     end
 end
+
+@testset "midpoint" begin
+    a = [1, 3]
+    b = [3, 4]
+    @test midpoint(a, b) == [2.0, 3.5]
+    b = float.(b)
+    @test midpoint(a, b) == [2.0, 3.5]
+end

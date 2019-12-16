@@ -292,6 +292,7 @@ export
     log1p,
     log2,
     maxintfloat,
+    midpoint,
     mod,
     mod1,
     modf,

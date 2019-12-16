@@ -906,3 +906,15 @@ function binomial(n::T, k::T) where T<:Integer
     end
     convert(T, copysign(x, sgn))
 end
+
+"""
+    midpoint(a, b)
+
+Compute the value of a point that lies halfway between `a` and `b`.
+This is essentially `(a + b)/2`, but computed in a way that avoids overflow.
+When `a` and `b` are Integers, this uses integer division and returns an integer.
+"""
+midpoint(a, b) = midpoint(promote(a, b)...)
+
+# See Knuth, Volume 4, Fascile 1
+midpoint(a::T, b::T) where T<:Integer = (a & b) + ((a ⊻ b) >> 0x01)

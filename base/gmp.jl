@@ -725,6 +725,10 @@ Base.checked_cld(a::BigInt, b::BigInt) = cld(a, b)
 Base.add_with_overflow(a::BigInt, b::BigInt) = a + b, false
 Base.sub_with_overflow(a::BigInt, b::BigInt) = a - b, false
 Base.mul_with_overflow(a::BigInt, b::BigInt) = a * b, false
+function Base.midpoint(a::BigInt, b::BigInt)
+    lo, hi = minmax(a, b)
+    return lo + ((hi - lo) >> 1)
+end
 
 function Base.deepcopy_internal(x::BigInt, stackdict::IdDict)
     if haskey(stackdict, x)

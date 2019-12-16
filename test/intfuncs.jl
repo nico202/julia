@@ -300,3 +300,24 @@ end
 for b in [-100:-2; 2:100;]
     @test Base.ndigits0z(0, b) == 0
 end
+
+@testset "midpoint" begin
+    @test midpoint(1, 3) === midpoint(3, 1) === 2
+    @test midpoint(2, 4) === midpoint(4, 2) === 3
+    @test 2 <= midpoint(1, 4) <= 3
+    @test 2 <= midpoint(4, 1) <= 3
+    @test midpoint(-3, -1) === -2
+    @test midpoint(-4, -2) === -3
+    @test -3 <= midpoint(-4, -1) <= -2
+    @test midpoint(-1, 1) ===  0
+    @test -1 <= midpoint(-2, 1) <= 0
+    @test 0 <= midpoint(-1, 2) <= 1
+    @test midpoint(-2, 2) ===  0
+    @test midpoint(typemax(Int)-2, typemax(Int)) === midpoint(typemax(Int), typemax(Int)-2) === typemax(Int)-1
+    @test midpoint(typemin(Int), typemin(Int)+2) === midpoint(typemin(Int)+2, typemin(Int)) === typemin(Int)+1
+    @test -1 <= midpoint(typemin(Int), typemax(Int)) <= 0
+    @test -1 <= midpoint(typemax(Int), typemin(Int)) <= 0
+
+    @test midpoint(0x01, 3) === 2
+    @test midpoint(BigInt(1), 3) == BigInt(2)
+end

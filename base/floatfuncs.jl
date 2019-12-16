@@ -331,3 +331,10 @@ end
 # properly restore the rounding mode
 Rounding.setrounding_raw(Float32, Rounding.JL_FE_TONEAREST)
 Rounding.setrounding_raw(Float64, Rounding.JL_FE_TONEAREST)
+
+# midpoint
+
+midpoint(a::T, b::T) where {T<:AbstractFloat} =
+    signbit(a) ⊻ signbit(b) ? (a + b)/2 : a + (b-a)/2
+
+midpoint(a::T, b::T) where T = (a + b)/2    # generic fallback

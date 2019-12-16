@@ -100,3 +100,25 @@ end
     @test round(Float16(0.6), sigdigits=2) === Float16(0.6)
     @test round(Float16(1.1), sigdigits=70) === Float16(1.1)
 end
+
+@testset "midpoint" begin
+    @test midpoint(1.0, 3) === midpoint(3.0, 1) === 2.0
+    @test midpoint(2, 4.0) === midpoint(4, 2.0) === 3.0
+    @test midpoint(1, 4.0) === 2.5
+    @test midpoint(-3.0, -1) === -2.0
+    @test midpoint(-4, -2.0) === -3.0
+    for T in (Float16, Float32, Float64)
+        @test midpoint(-floatmax(T), floatmax(T)) === zero(T)
+        @test midpoint(maxintfloat(T) - 2, maxintfloat(T)) === maxintfloat(T) - 1
+        @test midpoint(maxintfloat(T), maxintfloat(T) - 2) === maxintfloat(T) - 1
+        @test midpoint(-maxintfloat(T) + 2, maxintfloat(T)) === oneunit(T)
+        @test midpoint(maxintfloat(T) - 2, -maxintfloat(T)) === -oneunit(T)
+    end
+    for T in (BigFloat,)  # tests where == is needed instead of ===
+        @test midpoint(-floatmax(T), floatmax(T)) == zero(T)
+        @test midpoint(maxintfloat(T) - 2, maxintfloat(T)) == maxintfloat(T) - 1
+        @test midpoint(maxintfloat(T), maxintfloat(T) - 2) == maxintfloat(T) - 1
+        @test midpoint(-maxintfloat(T) + 2, maxintfloat(T)) == oneunit(T)
+        @test midpoint(maxintfloat(T) - 2, -maxintfloat(T)) == -oneunit(T)
+    end
+end
