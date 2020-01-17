@@ -812,7 +812,10 @@ function _include_dependency(mod::Module, _path::AbstractString)
         path = normpath(joinpath(dirname(prev), _path))
     end
     if _track_dependencies[]
-        push!(_require_dependencies, (mod, path, mtime(path)))
+        push!(_require_dependencies,
+              (mod, path,
+               haskey(ENV, "SOURCE_DATE_EPOCH") ?
+               parse(Float64, ENV["SOURCE_DATE_EPOCH"]) : mtime(path)))
     end
     return path, prev
 end
