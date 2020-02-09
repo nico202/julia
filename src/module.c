@@ -29,7 +29,7 @@ JL_DLLEXPORT jl_module_t *jl_new_module(jl_sym_t *name)
     m->istopmod = 0;
     m->uuid = uuid_zero;
     static unsigned int mcounter; // simple counter backup, in case hrtime is not incrementing
-    m->build_id = jl_hrtime() + (++mcounter);
+    m->build_id = ++mcounter;
     if (!m->build_id)
         m->build_id++; // build id 0 is invalid
     m->primary_world = 0;
