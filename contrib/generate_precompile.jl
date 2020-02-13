@@ -56,6 +56,9 @@ if Pkg !== nothing
     precompile_script *= Pkg.precompile_script
 end
 
+precompile_script = """1+1
+2+2"""
+
 function generate_precompile_statements()
     start_time = time()
     debug_output = devnull # or stdout
@@ -179,7 +182,7 @@ function generate_precompile_statements()
         if have_repl
             # Seems like a reasonable number right now, adjust as needed
             # comment out if debugging script
-            @assert n_succeeded > 3500
+            @assert n_succeeded > 1
         end
 
         print(" $(length(statements)) generated in ")
