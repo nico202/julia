@@ -403,7 +403,7 @@ function __init__()
         end # otherwise, trust that openblas will pick CPU_THREADS anyways, without any intervention
     end
     # for the few uses of Libc.rand in Base:
-    Libc.srand()
+    Libc.srand(0)
     # Base library init
     reinit_stdio()
     Multimedia.reinit_displays() # since Multimedia.displays uses stdout as fallback
