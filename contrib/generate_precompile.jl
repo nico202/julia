@@ -157,7 +157,7 @@ function generate_precompile_statements()
                     "TERM" => "") do
             sysimg = Base.unsafe_string(Base.JLOptions().image_file)
             run(```$(julia_exepath()) -O0 --trace-compile=$precompile_file --sysimage $sysimg
-                   --cpu-target=native --startup-file=no --color=yes -e 1+1```)
+                   --cpu-target=native --startup-file=no --color=yes -e "import REPL"```)
         end
 
         # Extract the precompile statements from the precompile file
