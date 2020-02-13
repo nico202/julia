@@ -1356,7 +1356,7 @@ jl_code_instance_t *jl_compile_linfo(jl_method_instance_t *mi, jl_code_info_t *s
         }
         if (dump_compiles_stream != NULL) {
             uint64_t this_time = jl_hrtime();
-            jl_printf(dump_compiles_stream, "%" PRIu64 "\t\"", this_time - last_time);
+            jl_printf(dump_compiles_stream, "%" PRIu64 "\t\"", 1LU);
             jl_static_show(dump_compiles_stream, mi->specTypes);
             jl_printf(dump_compiles_stream, "\"\n");
             last_time = this_time;
