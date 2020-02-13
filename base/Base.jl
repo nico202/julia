@@ -64,7 +64,7 @@ Get the time in nanoseconds. The time corresponding to 0 is undefined, and wraps
 """
 time_ns() = ccall(:jl_hrtime, UInt64, ())
 
-start_base_include = time_ns()
+start_base_include = 1 # time_ns()
 
 ## Load essential files and libraries
 include("essentials.jl")
@@ -385,7 +385,7 @@ function include(mod::Module, _path::String)
     return result
 end
 
-end_base_include = time_ns()
+end_base_include = 1 # time_ns()
 
 if is_primary_base_module
 function __init__()

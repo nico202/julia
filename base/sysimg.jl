@@ -55,8 +55,10 @@ let
     print_time(Base, (Base.end_base_include - Base.start_base_include) * 10^(-9))
 
     Base._track_dependencies[] = true
-    Base.tot_time_stdlib[] = @elapsed for stdlib in stdlibs
-        tt = @elapsed Base.require(Base, stdlib)
+    Base.tot_time_stdlib[] = 0
+    for stdlib in stdlibs
+        tt = 1
+        Base.require(Base, stdlib)
         print_time(stdlib, tt)
     end
     for dep in Base._require_dependencies
@@ -78,7 +80,8 @@ empty!(LOAD_PATH)
 Base.init_load_path() # want to be able to find external packages in userimg.jl
 
 let
-tot_time_userimg = @elapsed (Base.isfile("userimg.jl") && Base.include(Main, "userimg.jl"))
+tot_time_userimg = 0
+(Base.isfile("userimg.jl") && Base.include(Main, "userimg.jl"))
 
 
 tot_time_base = (Base.end_base_include - Base.start_base_include) * 10.0^(-9)
