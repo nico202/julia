@@ -88,13 +88,14 @@ function generate_precompile_statements()
         # Run a repl process and replay our script
         pty_slave, pty_master = open_fake_pty()
         blackhole = Sys.isunix() ? "/dev/null" : "nul"
-        if have_repl
-            cmdargs = ```--color=yes
-                      -e 'import REPL; REPL.Terminals.is_precompiling[] = true'
-                      ```
-        else
-            cmdargs = `-e nothing`
-        end
+        # if have_repl
+        #     cmdargs = ```--color=yes
+        #               -e 'import REPL; REPL.Terminals.is_precompiling[] = true'
+        #               ```
+        # else
+        #     cmdargs = `-e nothing`
+        # end
+        cmdargs = `-e nothing`
         p = withenv("JULIA_HISTORY" => blackhole,
                     "JULIA_PROJECT" => nothing, # remove from environment
                     "JULIA_LOAD_PATH" => Sys.iswindows() ? "@;@stdlib" : "@:@stdlib",
@@ -102,7 +103,6 @@ function generate_precompile_statements()
             sysimg = Base.unsafe_string(Base.JLOptions().image_file)
             run(```$(julia_exepath()) -O0 --trace-compile=$precompile_file --sysimage $sysimg
                    --cpu-target=native --startup-file=no --color=yes
-                   -e 'import REPL; REPL.Terminals.is_precompiling[] = true'
                    -i $cmdargs```,
                 pty_slave, pty_slave, pty_slave; wait=false)
         end
