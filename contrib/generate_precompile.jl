@@ -61,7 +61,9 @@ function generate_precompile_statements()
     debug_output = devnull # or stdout
 
     # Precompile a package
-    mktempdir() do prec_path
+    prec_path = "/tmp/jl_precompile"
+    mkdir(prec_path)
+    cd(prec_path) do
         push!(DEPOT_PATH, prec_path)
         push!(LOAD_PATH, prec_path)
         pkgname = "__PackagePrecompilationStatementModule"
@@ -75,9 +77,11 @@ function generate_precompile_statements()
         empty!(LOAD_PATH)
         empty!(DEPOT_PATH)
     end
+    rm(prec_path, recursive=true)
 
     print("Generating precompile statements...")
-    mktemp() do precompile_file, precompile_file_h
+    precompile_file = "/tmp/jl_precompile_file"
+    open(precompile_file, "w+") do precompile_file_h
         # Run a repl process and replay our script
         pty_slave, pty_master = open_fake_pty()
         blackhole = Sys.isunix() ? "/dev/null" : "nul"
@@ -183,7 +187,7 @@ function generate_precompile_statements()
         Base.time_print(tot_time * 10^9)
         print(" (overhead "); Base.time_print((tot_time - include_time) * 10^9); println(")")
     end
-
+    rm(precompile_file)
     return
 end
 
