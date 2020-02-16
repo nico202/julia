@@ -1212,13 +1212,13 @@ function compilecache_path(pkg::PkgId)::String
     cachepath = joinpath(DEPOT_PATH[1], entrypath)
     isdir(cachepath) || mkpath(cachepath)
     if pkg.uuid === nothing
-        abspath(cachepath, entryfile) * ".ji"
+        realpath(cachepath, entryfile) * ".ji"
     else
         crc = _crc32c(something(Base.active_project(), ""))
         crc = _crc32c(unsafe_string(JLOptions().image_file), crc)
         crc = _crc32c(unsafe_string(JLOptions().julia_bin), crc)
         project_precompile_slug = slug(crc, 5)
-        abspath(cachepath, string(entryfile, "_", project_precompile_slug, ".ji"))
+        realpath(cachepath, string(entryfile, "_", project_precompile_slug, ".ji"))
     end
 end
 
