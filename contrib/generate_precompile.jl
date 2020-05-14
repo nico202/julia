@@ -170,7 +170,7 @@ function generate_precompile_statements()
 
         # Create a staging area where all the loaded packages are available
         PrecompileStagingArea = Module()
-        for (_pkgid, _mod) in Base.loaded_modules
+        for (_pkgid, _mod) in sort(collect(Base.loaded_modules), by = x->x[1].name)
             if !(_pkgid.name in ("Main", "Core", "Base"))
                 eval(PrecompileStagingArea, :(const $(Symbol(_mod)) = $_mod))
             end
