@@ -160,7 +160,17 @@ function generate_precompile_statements()
     end
 
     # Collect statements from running the script
-    mktempdir() do prec_path
+    # The current directory get stored in the precompile cache
+    # (because of calls like `push!(DEPOT_PATH, prec_path)`)
+    prec_path = joinpath(tempdir(), "jl_precompile")
+    if isfile(prec_path)
+        # Fallback in case the directory already exists
+        @warn "Folder $prec_path already exists, using a random name"
+        @warn "This build will not be deterministic"
+        prec_path = mktempdir()
+    end
+    mkdir(prec_path)
+    cd(prec_path) do
         # Also precompile a package here
         pkgname = "__PackagePrecompilationStatementModule"
         mkpath(joinpath(prec_path, pkgname, "src"))
@@ -182,8 +192,10 @@ function generate_precompile_statements()
             push!(statements, statement)
         end
     end
+    rm(prec_path, recursive=true)
 
-    mktemp() do precompile_file, precompile_file_h
+    precompile_file = joinpath(tempdir(), "jl_precompile_file")
+    open(precompile_file, "w+") do precompile_file_h
         # Collect statements from running a REPL process and replaying our REPL script
         pts, ptm = open_fake_pty()
         blackhole = Sys.isunix() ? "/dev/null" : "nul"
@@ -261,6 +273,7 @@ function generate_precompile_statements()
             push!(statements, statement)
         end
     end
+    rm(precompile_file)
 
     # Create a staging area where all the loaded packages are available
     PrecompileStagingArea = Module()
