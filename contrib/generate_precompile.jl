@@ -113,6 +113,8 @@ if Pkg !== nothing
     repl_script *= Pkg.precompile_script
 end
 
+precompile_script = "1+1\n2+2"
+
 FileWatching = get(Base.loaded_modules,
           Base.PkgId(Base.UUID("7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"), "FileWatching"),
           nothing)
