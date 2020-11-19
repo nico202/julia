@@ -30,14 +30,8 @@ $2_SRC_DIR := $1
 $2_SRC_FILE := $$(SRCCACHE)/$1.git
 $$($2_SRC_FILE)/HEAD: | $$(SRCCACHE)
 	git clone -q --mirror --branch $$($2_BRANCH) $$($2_GIT_URL) $$(dir $$@)
-$5/$1/.git/HEAD: | $$($2_SRC_FILE)/HEAD
-	# try to update the cache, if that fails, attempt to continue anyways (the ref might already be local)
-	-cd $$($2_SRC_FILE) && git fetch -q $$($2_GIT_URL) $$($2_BRANCH):remotes/origin/$$($2_BRANCH)
-	git clone -q --depth=10 --branch $$($2_BRANCH) $$($2_SRC_FILE) $5/$1
-	cd $5/$1 && git remote set-url origin $$($2_GIT_URL)
-#ifneq ($3,)
-	touch -c $5/$1/$3 # old target
-#endif
+$5/$1/.git/HEAD:
+	echo $(pwd)
 	echo 1 > $5/$1/source-extracted
 ifneq ($5,$$(BUILDDIR))
 $$(BUILDDIR)/$1:
@@ -46,9 +40,9 @@ $5/$1/source-extracted: | $$(BUILDDIR)/$1
 endif
 $5/$1/source-extracted: $$(SRCDIR)/$1.version | $5/$1/.git/HEAD
 	# try to update the cache, if that fails, attempt to continue anyways (the ref might already be local)
-	-cd $$(SRCCACHE)/$1.git && git fetch -q $$($2_GIT_URL) $$($2_BRANCH):remotes/origin/$$($2_BRANCH)
-	cd $5/$1 && git fetch -q $$(SRCCACHE)/$1.git remotes/origin/$$($2_BRANCH):remotes/origin/$$($2_BRANCH)
-	cd $5/$1 && git checkout -q --detach $$($2_SHA1)
+	# -cd $$(SRCCACHE)/$1.git && git fetch -q $$($2_GIT_URL) $$($2_BRANCH):remotes/origin/$$($2_BRANCH)
+	# cd $5/$1 && git fetch -q $$(SRCCACHE)/$1.git remotes/origin/$$($2_BRANCH):remotes/origin/$$($2_BRANCH)
+	# cd $5/$1 && git checkout -q --detach $$($2_SHA1)
 	@[ '$$($2_SHA1)' = "$$$$(cd $5/$1 && git show -s --format='%H' HEAD)" ] || echo $$(WARNCOLOR)'==> warning: SHA1 hash did not match $1.version file'$$(ENDCOLOR)
 	echo 1 > $$@
 $5/$1/source-compiled: $5/$1/.git/HEAD

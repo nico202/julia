@@ -365,11 +365,11 @@ endif
 
 	# Copy in all .jl sources as well
 	mkdir -p $(DESTDIR)$(datarootdir)/julia/base $(DESTDIR)$(datarootdir)/julia/test
-	cp -R -L $(JULIAHOME)/base/* $(DESTDIR)$(datarootdir)/julia/base
-	cp -R -L $(JULIAHOME)/test/* $(DESTDIR)$(datarootdir)/julia/test
+	# cp -R -L $(JULIAHOME)/base/* $(DESTDIR)$(datarootdir)/julia/base
+	# cp -R -L $(JULIAHOME)/test/* $(DESTDIR)$(datarootdir)/julia/test
 	cp -R -L $(build_datarootdir)/julia/* $(DESTDIR)$(datarootdir)/julia
 	# Copy documentation
-	cp -R -L $(BUILDROOT)/doc/_build/html $(DESTDIR)$(docdir)/
+	# cp -R -L $(BUILDROOT)/doc/_build/html $(DESTDIR)$(docdir)/
 	# Remove various files which should not be installed
 	-rm -f $(DESTDIR)$(datarootdir)/julia/base/version_git.sh
 	-rm -f $(DESTDIR)$(datarootdir)/julia/test/Makefile
