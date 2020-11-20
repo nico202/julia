@@ -206,7 +206,7 @@ static jl_callptr_t _jl_compile_codeinst(
             }
         }
         if (dump_compiles_stream != NULL) {
-            jl_printf(dump_compiles_stream, "%" PRIu64 "\t\"", end_time - start_time);
+            jl_printf(dump_compiles_stream, "%" PRIu64 "\t\"", 1LU);
             jl_static_show(dump_compiles_stream, mi->specTypes);
             jl_printf(dump_compiles_stream, "\"\n");
         }
@@ -604,7 +604,7 @@ CompilerResultT JuliaOJIT::CompilerT::operator()(Module &M)
     uint64_t end_time = 0;
     if (dump_llvm_opt_stream != NULL) {
         end_time = jl_hrtime();
-        jl_printf(dump_llvm_opt_stream, "  time_ns: %" PRIu64 "\n", end_time - start_time);
+        jl_printf(dump_llvm_opt_stream, "  time_ns: %" PRIu64 "\n", 1LU);
         jl_printf(dump_llvm_opt_stream, "  optlevel: %d\n", optlevel);
 
         // Print LLVM function statistics _after_ optimization

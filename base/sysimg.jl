@@ -67,14 +67,16 @@ let
     # use a temp module to avoid leaving the type of this closure in Main
     m = Module()
     GC.@preserve m begin
-        print_time = @eval m (mod, t) -> (print(rpad(string(mod) * "  ", $maxlen + 3, "─"));
-                                          Base.time_print(t * 10^9); println())
-        print_time(Base, (Base.end_base_include - Base.start_base_include) * 10^(-9))
+        # print_time = @eval m (mod, t) -> (print(rpad(string(mod) * "  ", $maxlen + 3, "─"));
+        # Base.time_print(t * 10^9); println())
+        # print_time(Base, (Base.end_base_include - Base.start_base_include) * 10^(-9))
 
         Base._track_dependencies[] = true
-        tot_time_stdlib = @elapsed for stdlib in stdlibs
-            tt = @elapsed Base.require(Base, stdlib)
-            print_time(stdlib, tt)
+        tot_time_stdlib = 0
+        for stdlib in stdlibs
+            Base.require(Base, stdlib)
+            # tt = @elapsed
+            # print_time(stdlib, tt)
         end
         for dep in Base._require_dependencies
             dep[3] == 0.0 && continue
@@ -83,7 +85,7 @@ let
         empty!(Base._require_dependencies)
         Base._track_dependencies[] = false
 
-        print_time("Stdlibs total", tot_time_stdlib)
+        # print_time("Stdlibs total", tot_time_stdlib)
     end
 
     # Clear global state
@@ -94,7 +96,8 @@ let
     Base.init_load_path() # want to be able to find external packages in userimg.jl
 
     ccall(:jl_clear_implicit_imports, Cvoid, (Any,), Main)
-    tot_time_userimg = @elapsed (isfile("userimg.jl") && Base.include(Main, "userimg.jl"))
+    tot_time_userimg = 0
+    (isfile("userimg.jl") && Base.include(Main, "userimg.jl"))
 
     tot_time_base = (Base.end_base_include - Base.start_base_include) * 10.0^(-9)
     tot_time = tot_time_base + tot_time_stdlib + tot_time_userimg

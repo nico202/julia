@@ -65,6 +65,7 @@ julia_exepath() = joinpath(Sys.BINDIR::String, Base.julia_exename())
 
 have_repl =  haskey(Base.loaded_modules,
                     Base.PkgId(Base.UUID("3fa0cd96-eef1-5676-8a61-b3b8758bbffb"), "REPL"))
+have_repl = false
 if have_repl
     hardcoded_precompile_statements *= """
     @assert precompile(Tuple{typeof(getproperty), REPL.REPLBackend, Symbol})
@@ -180,7 +181,7 @@ function generate_precompile_statements()
               module $pkgname
               end
               """)
-        tmp = tempname()
+        tmp = "tempname"
         s = """
             pushfirst!(DEPOT_PATH, $(repr(prec_path)));
             Base.PRECOMPILE_TRACE_COMPILE[] = $(repr(tmp));
@@ -286,6 +287,7 @@ function generate_precompile_statements()
     # Execute the collected precompile statements
     n_succeeded = 0
     include_time = @elapsed for statement in sort(collect(statements))
+        continue
         # println(statement)
         # The compiler has problem caching signatures with `Vararg{?, N}`. Replacing
         # N with a large number seems to work around it.

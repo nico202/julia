@@ -64,7 +64,7 @@ Get the time in nanoseconds. The time corresponding to 0 is undefined, and wraps
 """
 time_ns() = ccall(:jl_hrtime, UInt64, ())
 
-start_base_include = time_ns()
+start_base_include = 1
 
 ## Load essential files and libraries
 include("essentials.jl")
@@ -386,7 +386,7 @@ end
 include(mod::Module, _path::AbstractString) = _include(identity, mod, _path)
 include(mapexpr::Function, mod::Module, _path::AbstractString) = _include(mapexpr, mod, _path)
 
-end_base_include = time_ns()
+end_base_include = 1
 
 const _sysimage_modules = PkgId[]
 in_sysimage(pkgid::PkgId) = pkgid in _sysimage_modules
