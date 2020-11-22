@@ -22,12 +22,17 @@ include(mod, x) = Core.include(mod, x)
 #############
 # from Base #
 #############
-
+println("Including from Base")
 # essential files and libraries
+println("essentials.jl")
 include("essentials.jl")
+println("ctypes.jl")
 include("ctypes.jl")
+println("generator.jl")
 include("generator.jl")
+println("reflection.jl")
 include("reflection.jl")
+println("options.jl")
 include("options.jl")
 
 # core operations & types

@@ -5847,6 +5847,7 @@ static std::pair<std::unique_ptr<Module>, jl_llvm_functions_t>
 #endif
     funcName << unadorned_name << "_" << globalUnique++;
     declarations.specFunctionObject = funcName.str();
+    fprintf(stderr, "FuncName is %s\n", funcName.str().c_str());
 
     // allocate Function declarations and wrapper objects
     Module *M = new Module(ctx.name, jl_LLVMContext);

@@ -627,7 +627,7 @@ function find_all_in_cache_path(pkg::PkgId)
     entrypath, entryfile = cache_file_entry(pkg)
     for path in joinpath.(DEPOT_PATH, entrypath)
         isdir(path) || continue
-        for file in readdir(path)
+        for file in sort(readdir(path))
             if !((pkg.uuid === nothing && file == entryfile * ".ji") ||
                  (pkg.uuid !== nothing && startswith(file, entryfile * "_")))
                  continue
@@ -779,7 +779,6 @@ function _include_dependency(mod::Module, _path::AbstractString)
         path = normpath(joinpath(dirname(prev), _path))
     end
     if _track_dependencies[]
-        @warn haskey(ENV, "SOURCE_DATE_EPOCH") ? "USING SOURCE DATE EPOCH" : "NOT using SOURCE DATE EPOCH"
         push!(_require_dependencies,
               (mod, path,
                haskey(ENV, "SOURCE_DATE_EPOCH") ?
@@ -1332,7 +1331,8 @@ function compilecache(pkg::PkgId, path::String, internal_stderr::IO = stderr, in
             # prune the directory with cache files
             if pkg.uuid !== nothing
                 entrypath, entryfile = cache_file_entry(pkg)
-                cachefiles = filter!(x -> startswith(x, entryfile * "_"), readdir(cachepath))
+                cachefiles = filter!(x -> startswith(x, entryfile * "_"),
+                                     sort(readdir(cachepath)))
                 if length(cachefiles) >= MAX_NUM_PRECOMPILE_FILES[]
                     idx = findmin(mtime.(joinpath.(cachepath, cachefiles)))[2]
                     rm(joinpath(cachepath, cachefiles[idx]))

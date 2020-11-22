@@ -56,7 +56,7 @@ end
 Timing(mi_info, start_time, cur_start_time, time, children) = Timing(mi_info, start_time, cur_start_time, time, children, nothing)
 Timing(mi_info, start_time) = Timing(mi_info, start_time, start_time, UInt64(0), Timing[])
 
-_time_ns() = ccall(:jl_hrtime, UInt64, ())  # Re-implemented here because Base not yet available.
+_time_ns() = 1 # ccall(:jl_hrtime, UInt64, ())  # Re-implemented here because Base not yet available.
 
 # We keep a stack of the Timings for each of the MethodInstances currently being timed.
 # Since type inference currently operates via a depth-first search (during abstract

@@ -253,7 +253,9 @@ void jl_init_threadtls(int16_t tid)
 {
     jl_ptls_t ptls = jl_get_ptls_states();
     ptls->system_id = jl_thread_self();
-    seed_cong(&ptls->rngseed);
+    // seed_cong(&ptls->rngseed);
+    // local-thread randomness without calling rand()
+    ++ptls->rngseed;
 #ifdef _OS_WINDOWS_
     if (tid == 0) {
         if (!DuplicateHandle(GetCurrentProcess(), GetCurrentThread(),

@@ -585,6 +585,7 @@ static inline void features_disable_amx(T &features)
 static NOINLINE std::pair<uint32_t,FeatureList<feature_sz>> _get_host_cpu(void)
 {
     FeatureList<feature_sz> features = {};
+  return std::make_pair(uint32_t(CPU::generic), features);
 
     int32_t info0[4];
     jl_cpuid(info0, 0);

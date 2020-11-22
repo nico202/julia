@@ -56,10 +56,10 @@ function gc_alloc_count(diff::GC_Diff)
 end
 
 # cumulative total time spent on compilation
-cumulative_compile_time_ns() = ccall(:jl_cumulative_compile_time_ns, UInt64, ())
+cumulative_compile_time_ns() = 1#ccall(:jl_cumulative_compile_time_ns, UInt64, ())
 
 # total time spend in garbage collection, in nanoseconds
-gc_time_ns() = ccall(:jl_gc_total_hrtime, UInt64, ())
+gc_time_ns() = 1# ccall(:jl_gc_total_hrtime, UInt64, ())
 
 """
     Base.gc_live_bytes()

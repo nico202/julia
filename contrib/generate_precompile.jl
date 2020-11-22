@@ -198,15 +198,7 @@ function generate_precompile_statements()
     precompile_file = joinpath(tempdir(), "jl_precompile_file")
     open(precompile_file, "w+") do precompile_file_h
         # Collect statements from running a REPL process and replaying our REPL script
-        pts, ptm = open_fake_pty()
         blackhole = Sys.isunix() ? "/dev/null" : "nul"
-        if have_repl
-            cmdargs = ```--color=yes
-                      -e 'import REPL; REPL.Terminals.is_precompiling[] = true'
-                      ```
-        else
-            cmdargs = `-e nothing`
-        end
         p = withenv("JULIA_HISTORY" => blackhole,
                     "JULIA_PROJECT" => nothing, # remove from environment
                     "JULIA_LOAD_PATH" => Sys.iswindows() ? "@;@stdlib" : "@:@stdlib",
@@ -214,71 +206,22 @@ function generate_precompile_statements()
                     "TERM" => "") do
             run(```$(julia_exepath()) -O0 --trace-compile=$precompile_file --sysimage $sysimg
                    --cpu-target=native --startup-file=no --color=yes
-                   -e 'import REPL; REPL.Terminals.is_precompiling[] = true'
-                   -i $cmdargs```,
-                   pts, pts, pts; wait=false)
+                   -e 1+1```)
         end
-        Base.close_stdio(pts)
-        # Prepare a background process to copy output from process until `pts` is closed
-        output_copy = Base.BufferStream()
-        tee = @async try
-            while !eof(ptm)
-                l = readavailable(ptm)
-                write(debug_output, l)
-                Sys.iswindows() && (sleep(0.1); yield(); yield()) # workaround hang - probably a libuv issue?
-                write(output_copy, l)
-            end
-            close(output_copy)
-            close(ptm)
-        catch ex
-            close(output_copy)
-            close(ptm)
-            if !(ex isa Base.IOError && ex.code == Base.UV_EIO)
-                rethrow() # ignore EIO on ptm after pts dies
-            end
-        end
-        # wait for the definitive prompt before start writing to the TTY
-        readuntil(output_copy, "julia>")
-        sleep(0.1)
-        readavailable(output_copy)
-        # Input our script
-        if have_repl
-            precompile_lines = split(repl_script::String, '\n'; keepempty=false)
-            curr = 0
-            for l in precompile_lines
-                sleep(0.1)
-                curr += 1
-                print("\rGenerating REPL precompile statements... $curr/$(length(precompile_lines))")
-                # consume any other output
-                bytesavailable(output_copy) > 0 && readavailable(output_copy)
-                # push our input
-                write(debug_output, "\n#### inputting statement: ####\n$(repr(l))\n####\n")
-                write(ptm, l, "\n")
-                readuntil(output_copy, "\n")
-                # wait for the next prompt-like to appear
-                # NOTE: this is rather inaccurate because the Pkg REPL mode is a special flower
-                readuntil(output_copy, "\n")
-                readuntil(output_copy, "> ")
-            end
-            println()
-        end
-        write(ptm, "exit()\n")
-        wait(tee)
-        success(p) || Base.pipeline_error(p)
-        close(ptm)
-        write(debug_output, "\n#### FINISHED ####\n")
-
         for statement in split(read(precompile_file, String), '\n')
             # Main should be completely clean
             occursin("Main.", statement) && continue
             push!(statements, statement)
         end
     end
-    rm(precompile_file)
+    # rm(precompile_file)
 
     # Create a staging area where all the loaded packages are available
     PrecompileStagingArea = Module()
-    for (_pkgid, _mod) in Base.loaded_modules
+    # Dicts are not sorted.  Sort it to fix non-determinism.
+    sorted_modules = sort(collect(Base.loaded_modules), by = x->x[1].name)
+    for (_pkgid, _mod) in sorted_modules
+        @show _pkgid, _mod
         if !(_pkgid.name in ("Main", "Core", "Base"))
             eval(PrecompileStagingArea, :(const $(Symbol(_mod)) = $_mod))
         end

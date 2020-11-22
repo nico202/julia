@@ -47,7 +47,7 @@ let
             :SuiteSparse,
             :Distributed,
             :SharedArrays,
-            :TOML,
+#            :TOML,
             :Artifacts,
 #            :Pkg,
             :Test,
@@ -78,10 +78,14 @@ let
             # tt = @elapsed
             # print_time(stdlib, tt)
         end
+        println("(NIXO) Base._require_dependencies in this order:")
+        println(Base._require_dependencies)
         for dep in Base._require_dependencies
             dep[3] == 0.0 && continue
             push!(Base._included_files, dep[1:2])
         end
+        println("(NIXO) Base._included_files in this order:")
+        println(Base._included_files)
         empty!(Base._require_dependencies)
         Base._track_dependencies[] = false
 

@@ -62,7 +62,7 @@ end
 
 Get the time in nanoseconds. The time corresponding to 0 is undefined, and wraps every 5.8 years.
 """
-time_ns() = ccall(:jl_hrtime, UInt64, ())
+time_ns() = 1# ccall(:jl_hrtime, UInt64, ())
 
 start_base_include = 1
 
@@ -406,6 +406,7 @@ function __init__()
             ENV["OPENBLAS_NUM_THREADS"] = cpu_threads
         end # otherwise, trust that openblas will pick CPU_THREADS anyways, without any intervention
     end
+    ENV["OPENBLAS_NUM_THREADS"] = 1
     # for the few uses of Libc.rand in Base:
     Libc.srand(0)
     # Base library init
