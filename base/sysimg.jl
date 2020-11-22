@@ -114,14 +114,21 @@ let
     print("Userimg: ──── "); Base.time_print(tot_time_userimg       * 10^9); print(" "); show(IOContext(stdout, :compact=>true), (tot_time_userimg       / tot_time) * 100); println("%")
     end
 
+    println("EMPTY LOAD")
     empty!(LOAD_PATH)
+    println("EMPTY DEPOT")
     empty!(DEPOT_PATH)
 end
+println("DONE LET BLOCK")
 
 empty!(Base.TOML_CACHE.d)
+println("DONE EMPTY TOML CACHE")
 Base.TOML.reinit!(Base.TOML_CACHE.p, "")
+println("REINIT")
 @eval Sys begin
     BINDIR = ""
     STDLIB = ""
 end
+println("DONE EVAL")
 end
+println("END OF SYSIMG.JL")
