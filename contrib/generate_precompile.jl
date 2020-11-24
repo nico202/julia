@@ -214,7 +214,7 @@ function generate_precompile_statements()
             push!(statements, statement)
         end
     end
-    # rm(precompile_file)
+    rm(precompile_file)
 
     # Create a staging area where all the loaded packages are available
     PrecompileStagingArea = Module()

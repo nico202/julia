@@ -950,7 +950,7 @@ root_module(where::Module, name::Symbol) =
     root_module(identify_package(where, String(name)))
 
 root_module_exists(key::PkgId) = haskey(loaded_modules, key)
-loaded_modules_array() = collect(values(loaded_modules))
+loaded_modules_array() = sort(collect(values(loaded_modules)), by = string)
 
 function unreference_module(key::PkgId)
     if haskey(loaded_modules, key)
